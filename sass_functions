@@ -1,0 +1,8 @@
+@function flat-color($color, $value: light) {
+  @return map-get($color, $value);
+}
+
+$red: (
+  light: #e74c3c,
+  dark:  #c0392b,
+ );
