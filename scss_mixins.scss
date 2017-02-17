@@ -1,0 +1,199 @@
+//
+// Adds an icon to the element using pseudo-selector
+//
+// @param $icon {string}
+// @param $font-size mixed{int || string}
+// @param $pseudo {string}
+// @param $position {string}
+// @param $border {string}
+// @param $transition {string}
+// @usage @include add-icon('\f107', 14px, after, absolute, 1px solid #ddd, all ease 0.4s);
+// --------------------------------------------------------
+@mixin add-icon($icon, $font-size, $pseudo: before, $position: relative, $border: null, $transition: null){
+	@if($position == absolute){
+		position: relative;
+	}
+	@if $pseudo == both {
+		$pseudo: 'before, &:after';
+		&:before {
+			float: left;
+			left: 0;
+		}
+		&:after {
+			float: right;
+			right: 0;
+		}
+	}
+	// Either a :before or :after pseudo-element, or both, defaulting to :before
+	&:#{$pseudo} {
+		@if $icon {
+			// A particular icon has been specified
+			content: "#{$icon}";
+		}
+		font-family: $font-family-awesome;
+		font-size: $font-size;
+		font-weight: 400;
+
+		@if($pseudo == before){
+			float: left;
+			left: 0;
+		}
+
+		@if($pseudo == after){
+			float: right;
+			right: 0;
+		}
+
+		@if($border != null) {
+			width: 1em;
+			height: 1em;
+			line-height: 1;
+			text-align: center;
+			border: $border;
+			padding: 0.4em 0.45em 0.45em;
+			@include border-radius(100px);
+			@include box-sizing(content-box);
+		}
+		@if($position == absolute){
+			margin-top: -$font-size;
+			position: $position;
+			top: 50%;
+		}
+		@if($transition != null){
+			@include transition($transition);
+		}
+		// Include any extra rules supplied for the pseudo-element
+		@content;
+	}
+}
+
+//
+// Styles for animated check icon
+//
+// @param $fill {string}
+// @param $stroke {string}
+// @param $stroke-width {int}
+// @param $size {int}
+// @param $line-cap {int}
+// @usage @include confirm-icon(none, #0075ee, 2, 90, round);
+// --------------------------------------------------------
+@mixin confirm-icon($fill, $stroke-color, $stroke-width, $stroke-offset, $line-cap){
+	circle{
+		fill: $fill;
+		stroke: $stroke-color;
+		stroke-width: $stroke-width;
+		stroke-linecap: $line-cap;
+		stroke-dasharray: ceil($stroke-offset * 2);
+		stroke-dashoffset: ceil($stroke-offset * 2);
+
+		@include animation(draw 0.5s infinite ease);
+	}
+	polyline {
+		fill: $fill;
+		stroke: $stroke-color;
+		stroke-width: $stroke-width;
+		stroke-linecap: $line-cap;
+		stroke-dasharray: $stroke-offset;
+		stroke-dashoffset: $stroke-offset;
+
+		@include animation(draw 3s infinite ease);
+	}
+	circle,
+	polyline{
+		@include animation-iteration-count(1);
+		@include animation-fill-mode(forwards);
+		@include keyframes(draw){
+			100% {
+				stroke-dashoffset: 0;
+			}
+		}
+	}
+}
+
+//
+// Styles for animated info icon
+//
+// @param $fill string
+// @param $stroke string
+// @param $stroke-width int
+// @param $size int
+// @param $line-cap int
+// @usage @include info-icon(none, #0075ee, 2, 90, square, 10);
+// --------------------------------------------------------
+@mixin info-icon($fill, $stroke-color, $stroke-width, $stroke-offset, $line-cap, $stroke-limit){
+	circle{
+		fill: $fill;
+		stroke: $stroke-color;
+		stroke-width: $stroke-width;
+		stroke-linecap: $line-cap;
+		stroke-dasharray: ceil($stroke-offset * 2);
+		stroke-dashoffset: ceil($stroke-offset * 2);
+		stroke-miterlimit: ceil($stroke-limit);
+
+		@include animation(draw 0.5s infinite ease);
+	}
+	line {
+		fill: $fill;
+		stroke: $stroke-color;
+		stroke-width: $stroke-width;
+		stroke-linecap: $line-cap;
+		stroke-dasharray: $stroke-offset;
+		stroke-dashoffset: $stroke-offset;
+
+		@include animation(draw 3s infinite ease);
+	}
+	rect {
+		fill: $fill;
+		stroke: $stroke-color;
+		stroke-width: $stroke-width;
+		stroke-linecap: $line-cap;
+		stroke-miterlimit: ceil($stroke-limit);
+	}
+	circle,
+	line{
+		@include animation-iteration-count(1);
+		@include animation-fill-mode(forwards);
+		@include keyframes(draw){
+			100% {
+				stroke-dashoffset: 0;
+			}
+		}
+	}
+}
+
+//
+// Base styles for image icons
+// Adds base styles for icons made with sprites.
+// Sets size and source. The rest of the styles will be scoped
+//
+// @param $size {int}
+// @param $src {string}
+// @usage @include img-icon(40px, '/icons-sprite.png');
+// --------------------------------------------------------
+@mixin img-icon($size, $src){
+	.img-icon{
+		display: inline-block;
+		vertical-align: middle;
+		text-align: center;
+		@include square($size);
+		> img {
+			background: url('#{$assets-path}#{$src}') no-repeat 0 0;
+			white-space: nowrap;
+		}
+	}
+}
+
+// Lists variants
+//
+// Easily pump out default styles
+// @param $color {value}
+// @param $icon {string}
+// @usage @include list-variant(#333, '\f105');
+// --------------------------------------------------------
+@mixin list-variant($color, $icon) {
+	content: $icon;
+	color: $color;
+	font-size: inherit;
+	padding-right: 3px;
+	font-family: $font-family-base;
+}
